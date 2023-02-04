@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -11,16 +12,20 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class ExampleCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final DriveSubsystem m_subsystem;
-
+  private final DoubleSupplier m_fwd;
+  private final DoubleSupplier m_rot;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(DriveSubsystem subsystem) {
+  public ExampleCommand(DriveSubsystem subsystem, DoubleSupplier x, DoubleSupplier z) {
     m_subsystem = subsystem;
+    m_fwd = x;
+    m_rot = z;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
+    
   }
 
   // Called when the command is initially scheduled.
@@ -29,7 +34,9 @@ public class ExampleCommand extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_subsystem.ArcadeDrive(m_fwd.getAsDouble(), m_rot.getAsDouble());
+  }
 
   // Called once the command ends or is interrupted.
   @Override

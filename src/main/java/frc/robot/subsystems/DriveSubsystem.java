@@ -6,10 +6,29 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 
 public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {}
+  public CANSparkMax r1Motor = new CANSparkMax(Constants.kR1, MotorType.kBrushed);
+  public CANSparkMax r2Motor = new CANSparkMax(Constants.kR2, MotorType.kBrushed);
+  public MotorControllerGroup rGroup = new MotorControllerGroup(r1Motor, r2Motor);
+
+  public CANSparkMax l1Motor = new CANSparkMax(Constants.kL1, MotorType.kBrushed);
+  public CANSparkMax l2Motor = new CANSparkMax(Constants.kL2, MotorType.kBrushed);
+  public MotorControllerGroup lGroup= new MotorControllerGroup(l1Motor, l2Motor);
+
+
+  public DifferentialDrive haylazDrive = new DifferentialDrive(rGroup, lGroup);
+  public DriveSubsystem() {
+
+  }
 
   /**
    * Example command factory method.
@@ -38,6 +57,9 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+  public void ArcadeDrive(double x , double z){
+    haylazDrive.arcadeDrive(x,z, true);
   }
 
   @Override
