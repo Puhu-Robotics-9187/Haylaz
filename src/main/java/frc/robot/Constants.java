@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicStatus1;
+
+import edu.wpi.first.wpilibj.Encoder;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -23,4 +27,13 @@ public final class Constants {
   public static int kL1 = 2; 
   public static int kR2 = 3;
   public static int kL2 = 4;
+
+  public static class lEncoder{
+   public static int port0 = 0;
+   public static int port1 = 1;
+  }
+  public static class rEncoder{
+    public static int port0 = 2;
+    public static int port1 = 3;
+   }
 }

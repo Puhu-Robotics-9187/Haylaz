@@ -6,7 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.drive;
 import frc.robot.subsystems.DriveSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -27,8 +27,7 @@ public class RobotContainer {
   private DriveSubsystem m_DriveSubsystem = new DriveSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final Joystick m_driverController =
-      new Joystick(OperatorConstants.kDriverControllerPort);
+  private Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
 
   private DoubleSupplier x;
   private DoubleSupplier z;
@@ -36,8 +35,11 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    m_DriveSubsystem.setDefaultCommand(new ExampleCommand(m_DriveSubsystem, () -> -m_driverController.getRawAxis(1), () -> m_driverController.getRawAxis(0)));
+    m_DriveSubsystem.setDefaultCommand(new drive(m_DriveSubsystem, 
+    () -> -m_driverController.getRawAxis(1),
+    () -> m_driverController.getRawAxis(0)));
     configureBindings();
+    
   }
 
 
@@ -57,7 +59,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
   }
-
+ 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
