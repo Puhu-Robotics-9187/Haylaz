@@ -36,8 +36,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     m_DriveSubsystem.setDefaultCommand(new drive(m_DriveSubsystem, 
-    () -> -m_driverController.getRawAxis(1),
-    () -> m_driverController.getRawAxis(0)));
+    () -> -m_driverController.getRawAxis(0),
+    () -> m_driverController.getRawAxis(1)));
     configureBindings();
     
   }

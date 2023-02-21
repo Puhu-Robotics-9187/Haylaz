@@ -58,9 +58,9 @@ public class DriveSubsystem extends SubsystemBase {
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = -4096;
 
-
-  private AnalogGyro gyros = new AnalogGyro(0);
-  private AnalogGyroSim gyroism = new AnalogGyroSim(gyros);
+  public double lvoltage;
+  public double rvoltage;
+;
   private AHRS gyro = new AHRS(SPI.Port.kMXP);
   int dev = SimDeviceDataJNI.getSimDeviceHandle("gyro");
   SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev,"Yaw"));
@@ -73,9 +73,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
-
-    lEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
-    rEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
+    ldriveEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
+    rdriveEncoder.setDistancePerPulse(2 * Math.PI * kWheelRadius / kEncoderResolution);
     
     m_driveSim = DifferentialDrivetrainSim.createKitbotSim(
     KitbotMotor.kDualCIMPerSide, // 2 CIMs per side.
@@ -87,6 +86,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void ArcadeDrive(double x , double z){
     haylazDrive.arcadeDrive(x,z, true);
+    rvoltage =x-z;
+    lvoltage =x+z;
   }
   public void resetOdometry(){
     rdriveEncoder.reset();
@@ -106,16 +107,17 @@ public class DriveSubsystem extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
     m_driveSim.setInputs(
-        lGroup.get(),
-        rGroup.get());
+        lGroup.get() * RobotController.getBatteryVoltage(),
+        rGroup.get() * RobotController.getBatteryVoltage());
     m_driveSim.update(0.02);
 
     
-    ldriveEncoderSim.setDistance(m_driveSim.getLeftPositionMeters());
-    ldriveEncoderSim.setRate(m_driveSim.getLeftVelocityMetersPerSecond());
-    rdriveEncoderSim.setDistance(m_driveSim.getRightPositionMeters());
-    rdriveEncoderSim.setRate(m_driveSim.getRightVelocityMetersPerSecond());
-    gyroism.setAngle(-m_driveSim.getHeading().getDegrees());
+    setSimDoubleFromDeviceData("navX-Sensor[0]", "Yaw", m_driveSim.getHeading().getDegrees());
+		ldriveEncoderSim.setDistance(m_driveSim.getLeftPositionMeters());
+		ldriveEncoderSim.setRate(m_driveSim.getLeftVelocityMetersPerSecond());
+		
+		rdriveEncoderSim.setDistance(m_driveSim.getRightPositionMeters());
+		rdriveEncoderSim.setRate(m_driveSim.getRightVelocityMetersPerSecond());
   }
     /** 
    * Allows for shorter more direct references of SimDoubles. Takes a SimDevice device name,
