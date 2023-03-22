@@ -4,9 +4,8 @@
 
 package frc.robot;
 
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicStatus1;
-
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -28,6 +27,50 @@ public final class Constants {
   public static int kR2 = 3;
   public static int kL2 = 4;
 
+  public static final double kWheelRadius = 0.0508;
+  public static final int kEncoderResolution = -4096;
+
+  public static class startArmPose{
+    public static double armSetpoint = Units.degreesToRadians(0);
+    public static double intakeSetpoint = Units.degreesToRadians(180);
+  }
+  public static class intakeArmPose{
+    public static double armSetpoint = Units.degreesToRadians(15);
+    public static double intakeSetpoint = Units.degreesToRadians(15);
+  }
+  public static class firstArmPose{
+    public static double armSetpoint = Units.degreesToRadians(06);
+    public static double intakeSetpoint = Units.degreesToRadians(180);
+  }
+  public static class secondArmPose{
+    public static double armSetpoint = Units.degreesToRadians(0);
+    public static double intakeSetpoint = Units.degreesToRadians(180);
+  }
+  public static class thirdArmPose{
+    public static double armSetpoint = Units.degreesToRadians(0);
+    public static double intakeSetpoint = Units.degreesToRadians(180);
+  }
+  public static class stationArmPose{
+    public static double armSetpoint = Units.degreesToRadians(0);
+    public static double intakeSetpoint = Units.degreesToRadians(180);
+  }
+
+
+
+  //Arm constants
+  public static int kArm = 5;
+  public static double massArm = 7.2 ;
+  public static double reductionArm = 64;
+  public static double armlengths = 1.2;
+
+  public static int kIntake = 6; 
+  public static double massIntake = 1.5;
+  public static double reductionIntake = 40; 
+  public static double intakeLengths = 0.5;
+
+  public static final DCMotor intakeMotor = DCMotor.getNeo550(kIntake);
+  public static final DCMotor armMotor = DCMotor.getNEO(kArm);
+
   public static class lEncoder{
    public static int port0 = 0;
    public static int port1 = 1;
@@ -35,5 +78,9 @@ public final class Constants {
   public static class rEncoder{
     public static int port0 = 2;
     public static int port1 = 3;
+   }
+  public static class ArmEncoder{
+    public static int port0 = 4;
+    public static int port1 = 5;
    }
 }

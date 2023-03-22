@@ -36,6 +36,11 @@
           "open": true
         }
       },
+      "Talon SRX[1]/Quad Encoder": {
+        "header": {
+          "open": true
+        }
+      },
       "navX-Sensor[0]": {
         "header": {
           "open": true
@@ -91,6 +96,12 @@
       },
       "SmartDashboard": {
         "Field": {
+          "open": true
+        },
+        "open": true
+      },
+      "photonvision": {
+        "HaylazinCam": {
           "open": true
         },
         "open": true
