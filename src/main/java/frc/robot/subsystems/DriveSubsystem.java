@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -41,16 +43,16 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
-  private WPI_VictorSPX r1Motor = new WPI_VictorSPX(Constants.kR1);
-  private WPI_VictorSPX r2Motor = new WPI_VictorSPX(Constants.kR2);
+  private WPI_VictorSPX r1Motor = new WPI_VictorSPX(DriveConstants.kR1);
+  private WPI_VictorSPX r2Motor = new WPI_VictorSPX(DriveConstants.kR2);
   public MotorControllerGroup rGroup  = new MotorControllerGroup(r1Motor, r2Motor);
 
-  private WPI_VictorSPX l1Motor = new WPI_VictorSPX(Constants.kL1);
-  private WPI_VictorSPX l2Motor = new WPI_VictorSPX(Constants.kL2);
+  private WPI_VictorSPX l1Motor = new WPI_VictorSPX(DriveConstants.kL1);
+  private WPI_VictorSPX l2Motor = new WPI_VictorSPX(DriveConstants.kL2);
   private MotorControllerGroup lGroup = new MotorControllerGroup(l1Motor, l2Motor);
 
-  private Encoder ldriveEncoder = new Encoder(Constants.lEncoder.port0, Constants.lEncoder.port1);
-  private Encoder rdriveEncoder = new Encoder(Constants.rEncoder.port0, Constants.rEncoder.port1);
+  private Encoder ldriveEncoder = new Encoder(DriveConstants.lEncoder.port0, DriveConstants.lEncoder.port1);
+  private Encoder rdriveEncoder = new Encoder(DriveConstants.rEncoder.port0, DriveConstants.rEncoder.port1);
   private EncoderSim ldriveEncoderSim = new EncoderSim(ldriveEncoder);
   private EncoderSim rdriveEncoderSim = new EncoderSim(rdriveEncoder);
 
@@ -65,6 +67,11 @@ public class DriveSubsystem extends SubsystemBase {
   SimDouble angle = new SimDouble(SimDeviceDataJNI.getSimValueHandle(dev,"Yaw"));
 
   private Field2d field ;
+  private PIDController m_leftPIDController =  new PIDController(DriveConstants.pidLeft.kp, 0, DriveConstants.pidLeft.kd );
+  private PIDController m_rightPIDController =  new PIDController(DriveConstants.pidRight.kp, 0, DriveConstants.pidRight.kd);
+  DifferentialDriveWheelSpeeds speeds = new DifferentialDriveWheelSpeeds(10,10);
+
+
   private DifferentialDrivePoseEstimator haylazEstimator =  new DifferentialDrivePoseEstimator(
     m_kinematics,
     gyro.getRotation2d(),
@@ -76,11 +83,10 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem(){
     haylazDrive = new DifferentialDrive(rGroup, lGroup);
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), 0, 0);
-
     field = new Field2d();
     SmartDashboard.putData("Field", field);
-    ldriveEncoder.setDistancePerPulse(2 * Math.PI * Constants.kWheelRadius / Constants.kEncoderResolution);
-    rdriveEncoder.setDistancePerPulse(2 * Math.PI * Constants.kWheelRadius / Constants.kEncoderResolution);
+    ldriveEncoder.setDistancePerPulse(2 * Math.PI * DriveConstants.kWheelRadius / DriveConstants.kEncoderResolution);
+    rdriveEncoder.setDistancePerPulse(2 * Math.PI * DriveConstants.kWheelRadius / DriveConstants.kEncoderResolution);
     
     m_driveSim = DifferentialDrivetrainSim.createKitbotSim(
     KitbotMotor.kDualCIMPerSide, // 2 CIMs per side.
@@ -90,10 +96,6 @@ public class DriveSubsystem extends SubsystemBase {
   );
   }
 
-  public void ArcadeDrive(double x , double z){
-    haylazDrive.curvatureDrive(x,z, true);
-  }
-  
   public void resetOdometry(Pose2d pose){
     rdriveEncoder.reset();
     ldriveEncoder.reset();
@@ -102,16 +104,12 @@ public class DriveSubsystem extends SubsystemBase {
  public void ramsete(){
  
  }
- public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-  final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
-  final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+ public void ArcadeDrive( double x, double z) {
 
-  final double leftOutput =
-          m_leftPIDController.calculate(ldriveEncoder.getRate(), speeds.leftMetersPerSecond);
-  final double rightOutput =
-          m_rightPIDController.calculate(rdriveEncoder.getRate(), speeds.rightMetersPerSecond);
-  lGroup.setVoltage(leftOutput + leftFeedforward);
-  rGroup.setVoltage(rightOutput + rightFeedforward);
+  final double leftOutput = (x-z)*m_leftPIDController.calculate(ldriveEncoder.getRate(), speeds.leftMetersPerSecond);
+  final double rightOutput = (x+z)*m_rightPIDController.calculate(rdriveEncoder.getRate(), speeds.rightMetersPerSecond);
+  lGroup.setVoltage(leftOutput);
+  rGroup.setVoltage(rightOutput);
 }
 
   
@@ -122,7 +120,8 @@ public class DriveSubsystem extends SubsystemBase {
     field.setRobotPose(odometry.getPoseMeters());
     SmartDashboard.putNumber("Robot x", odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("Robot y", odometry.getPoseMeters().getTranslation().getY());
-    
+    haylazEstimator.update(gyro.getRotation2d(), ldriveEncoder.getDistance(), rdriveEncoder.getDistance());
+
   }
   @Override
   public void simulationPeriodic() {

@@ -21,14 +21,35 @@ public final class Constants {
     
 
   }
-  //drive motors ids
+
+  public static class DriveConstants {
   public static int kR1 = 1;
   public static int kL1 = 2; 
   public static int kR2 = 3;
   public static int kL2 = 4;
 
+  public static class lEncoder{
+   public static int port0 = 0;
+   public static int port1 = 1;
+  }
+
+  public static class rEncoder{
+    public static int port0 = 2;
+    public static int port1 = 3;
+   }  
   public static final double kWheelRadius = 0.0508;
   public static final int kEncoderResolution = -4096;
+
+  public static class pidLeft{
+    public static double kp=0.14;
+    public static double kd=0.014;
+  }
+  public static class pidRight{
+    public static double kp=0.14;
+    public static double kd=0.014;
+  }
+  
+  }
 
   public static class startArmPose{
     public static double armSetpoint = Units.degreesToRadians(0);
@@ -71,14 +92,6 @@ public final class Constants {
   public static final DCMotor intakeMotor = DCMotor.getNeo550(kIntake);
   public static final DCMotor armMotor = DCMotor.getNEO(kArm);
 
-  public static class lEncoder{
-   public static int port0 = 0;
-   public static int port1 = 1;
-  }
-  public static class rEncoder{
-    public static int port0 = 2;
-    public static int port1 = 3;
-   }
   public static class ArmEncoder{
     public static int port0 = 4;
     public static int port1 = 5;

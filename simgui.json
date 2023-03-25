@@ -116,7 +116,9 @@
       "Publishers": {
         "open": true
       },
-      "open": true
+      "Subscribers": {
+        "open": true
+      }
     },
     "visible": true
   },
