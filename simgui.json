@@ -41,18 +41,56 @@
           "open": true
         }
       },
+      "Victor SPX[1]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Victor SPX[2]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Victor SPX[3]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Victor SPX[4]": {
+        "header": {
+          "open": true
+        }
+      },
       "navX-Sensor[0]": {
         "header": {
           "open": true
         }
+      }
+    },
+    "RoboRIO": {
+      "3.3V Rail": {
+        "open": true
+      },
+      "5V Rail": {
+        "open": true
+      },
+      "6V Rail": {
+        "open": true
+      },
+      "RoboRIO Input": {
+        "open": true
       }
     }
   },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/DriveSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/navX-Sensor[1]": "Gyro",
       "/SmartDashboard/Field": "Field2d"
     },
     "windows": {
@@ -109,6 +147,9 @@
     }
   },
   "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
     "Connections": {
       "open": true
     },
@@ -118,15 +159,15 @@
       },
       "Subscribers": {
         "open": true
-      }
-    },
-    "visible": true
+      },
+      "open": true
+    }
   },
   "Plot": {
     "Plot <0>": {
       "plots": [
         {
-          "height": 332
+          "height": 338
         }
       ],
       "window": {

@@ -4,7 +4,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -21,7 +22,16 @@ public final class Constants {
     
 
   }
-
+  public static class kRed{
+    public static Pose2d _1 = new Pose2d(13, 2,Rotation2d.fromDegrees(25));
+    public static Pose2d _2 = new Pose2d(0, 0,Rotation2d.fromDegrees(0));
+    public static Pose2d _3 = new Pose2d(0, 0,Rotation2d.fromDegrees(0));
+  }
+  public static class kBlue{
+    public static Pose2d _1 = new Pose2d(0, 0,Rotation2d.fromDegrees(180));
+    public static Pose2d _2 = new Pose2d(0, 0,Rotation2d.fromDegrees(180));
+    public static Pose2d _3 = new Pose2d(0, 0,Rotation2d.fromDegrees(180));
+  }
   public static class DriveConstants {
   public static int kR1 = 1;
   public static int kL1 = 2; 
@@ -48,6 +58,7 @@ public final class Constants {
     public static double kp=0.14;
     public static double kd=0.014;
   }
+  public static double kTrackWidthMeters = Units.inchesToMeters(27);
   
   }
 
@@ -89,8 +100,6 @@ public final class Constants {
   public static double reductionIntake = 40; 
   public static double intakeLengths = 0.5;
 
-  public static final DCMotor intakeMotor = DCMotor.getNeo550(kIntake);
-  public static final DCMotor armMotor = DCMotor.getNEO(kArm);
 
   public static class ArmEncoder{
     public static int port0 = 4;

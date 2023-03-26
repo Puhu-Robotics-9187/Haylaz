@@ -6,22 +6,22 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveKinematicsConstraint;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -58,7 +58,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private DifferentialDrive haylazDrive;
   private DifferentialDriveOdometry odometry ;
-  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.482);
+  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(DriveConstants.kTrackWidthMeters);
   
   private DifferentialDrivetrainSim m_driveSim;
 
@@ -69,7 +69,6 @@ public class DriveSubsystem extends SubsystemBase {
   private Field2d field ;
   private PIDController m_leftPIDController =  new PIDController(DriveConstants.pidLeft.kp, 0, DriveConstants.pidLeft.kd );
   private PIDController m_rightPIDController =  new PIDController(DriveConstants.pidRight.kp, 0, DriveConstants.pidRight.kd);
-  DifferentialDriveWheelSpeeds speeds = new DifferentialDriveWheelSpeeds(10,10);
 
 
   private DifferentialDrivePoseEstimator haylazEstimator =  new DifferentialDrivePoseEstimator(
@@ -82,7 +81,7 @@ public class DriveSubsystem extends SubsystemBase {
     VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
   public DriveSubsystem(){
     haylazDrive = new DifferentialDrive(rGroup, lGroup);
-    odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), 0, 0);
+    odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), 0, 0,getStartLocation());
     field = new Field2d();
     SmartDashboard.putData("Field", field);
     ldriveEncoder.setDistancePerPulse(2 * Math.PI * DriveConstants.kWheelRadius / DriveConstants.kEncoderResolution);
@@ -96,7 +95,7 @@ public class DriveSubsystem extends SubsystemBase {
   );
   }
 
-  public void resetOdometry(Pose2d pose){
+  public void resetOdometry(){
     rdriveEncoder.reset();
     ldriveEncoder.reset();
     gyro.reset();    
@@ -104,10 +103,30 @@ public class DriveSubsystem extends SubsystemBase {
  public void ramsete(){
  
  }
+ private Pose2d getStartLocation()
+ {
+   int naber= DriverStation.getAlliance() == DriverStation.Alliance.Red ? DriverStation.getLocation() : DriverStation.getLocation() + 3;
+   switch(naber)
+   {
+     case 1:
+     return Constants.kRed._1;
+     case 2:
+     return Constants.kRed._2;
+     case 3:
+     return Constants.kRed._3;
+     case 4:
+     return Constants.kBlue._1;
+     case 5:
+     return Constants.kBlue._2;
+     case 6:
+      return Constants.kBlue._3;
+     default:
+       return new Pose2d();
+   }
+ }
  public void ArcadeDrive( double x, double z) {
-
-  final double leftOutput = (x-z)*m_leftPIDController.calculate(ldriveEncoder.getRate(), speeds.leftMetersPerSecond);
-  final double rightOutput = (x+z)*m_rightPIDController.calculate(rdriveEncoder.getRate(), speeds.rightMetersPerSecond);
+  double leftOutput = (x-z)*m_leftPIDController.calculate(ldriveEncoder.getRate(), 40);
+  double rightOutput = (x+z)*m_rightPIDController.calculate(rdriveEncoder.getRate(), 40);
   lGroup.setVoltage(leftOutput);
   rGroup.setVoltage(rightOutput);
 }
@@ -121,16 +140,15 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Robot x", odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("Robot y", odometry.getPoseMeters().getTranslation().getY());
     haylazEstimator.update(gyro.getRotation2d(), ldriveEncoder.getDistance(), rdriveEncoder.getDistance());
-
   }
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+    m_driveSim.update(0.02);
     m_driveSim.setInputs(
         lGroup.get() * RobotController.getBatteryVoltage(),
         rGroup.get() * RobotController.getBatteryVoltage());
-    m_driveSim.update(0.02);
-
+    
     
     setSimDoubleFromDeviceData("navX-Sensor[0]", "Yaw", m_driveSim.getHeading().getDegrees());
 		ldriveEncoderSim.setDistance(m_driveSim.getLeftPositionMeters());
