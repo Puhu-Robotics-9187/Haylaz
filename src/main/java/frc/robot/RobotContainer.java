@@ -5,7 +5,9 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoDrive;
 import frc.robot.commands.Autos;
+import frc.robot.commands.JoystickDrive;
 import frc.robot.commands.drive;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -24,10 +26,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private DriveSubsystem m_DriveSubsystem = new DriveSubsystem();
+  public DriveSubsystem m_DriveSubsystem = new DriveSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
+  public Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
 
   private DoubleSupplier x;
   private DoubleSupplier z;
@@ -35,9 +37,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    m_DriveSubsystem.setDefaultCommand(new drive(m_DriveSubsystem, 
-    () -> -m_driverController.getRawAxis(0),
-    () -> m_driverController.getRawAxis(1)));
+    m_DriveSubsystem.setDefaultCommand(new JoystickDrive(m_DriveSubsystem, m_driverController));
     configureBindings();
     
   }
@@ -55,7 +55,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
+    
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
   }
@@ -67,6 +67,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_DriveSubsystem,x,z);
+    //return Autos.exampleAuto(m_DriveSubsystem,x,z);
+    return new AutoDrive(m_DriveSubsystem);
   }
 }

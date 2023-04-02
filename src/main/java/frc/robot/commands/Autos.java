@@ -17,9 +17,11 @@ public final class Autos {
    * @param z 
    */
   public static CommandBase exampleAuto(DriveSubsystem subsystem, DoubleSupplier x, DoubleSupplier z) {
-    return Commands.sequence(new drive(subsystem,x,z));}
+    return Commands.sequence(new drive(subsystem,x,z));
+  }
 
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");
+    
   }
 }

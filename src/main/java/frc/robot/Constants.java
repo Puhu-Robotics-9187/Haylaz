@@ -22,6 +22,16 @@ public final class Constants {
     
 
   }
+
+  public static class ArmConstants{
+    public static final int armMotorID = 31;
+    public static final int armEncA = 0;
+    public static final int armEncB = 1;
+
+    public static final double armEncPPR = 1000;
+    public static final double armEncDPR = 360 / armEncPPR;
+  }
+
   public static class kRed{
     public static Pose2d _1 = new Pose2d(13, 2,Rotation2d.fromDegrees(25));
     public static Pose2d _2 = new Pose2d(0, 0,Rotation2d.fromDegrees(0));

@@ -4,29 +4,19 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-import frc.robot.subsystems.DriveSubsystem;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.DriveSubsystem;
 
-
-/** An example command that uses an example subsystem. */
-public class drive extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final DriveSubsystem m_subsystem;
-  private final DoubleSupplier m_fwd;
-  private final DoubleSupplier m_rot;
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public drive(DriveSubsystem subsystem, DoubleSupplier x, DoubleSupplier z)  {
-    m_subsystem = subsystem;
-    m_fwd = x;
-    m_rot = z;
+public class JoystickDrive extends CommandBase {
+  private DriveSubsystem m_drive;
+  private Joystick m_joy;
+  /** Creates a new JoystickDrive. */
+  public JoystickDrive(DriveSubsystem drive, Joystick joy) {
+    m_drive = drive;
+    m_joy = joy;
+    addRequirements(drive);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
-    
   }
 
   // Called when the command is initially scheduled.
@@ -36,7 +26,7 @@ public class drive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.ArcadeDrive(m_fwd.getAsDouble(), m_rot.getAsDouble());
+    m_drive.haylazDrive.arcadeDrive(m_joy.getY(), m_joy.getX());
   }
 
   // Called once the command ends or is interrupted.
